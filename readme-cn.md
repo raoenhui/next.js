@@ -277,13 +277,14 @@ _Note: The contents of `<head>` get cleared upon unmounting the component, so ma
 注意：在卸载组件时，' <head> '的内容将被清除。请确保每个页面都在其`<head>`定义了所需要的内容，而不是假设其他页面已经加过了
 
 ### Fetching data and component lifecycle
+获取数据以及组件生命周期
 
 <p><details>
   <summary><b>Examples</b></summary>
   <ul><li><a href="./examples/data-fetch">Data fetch</a></li></ul>
 </details></p>
 
-When you need state, lifecycle hooks or **initial data population** you can export a `React.Component` (instead of a stateless function, like shown above):
+如果你需要一个有状态、生命周期或有初始数据的React组件（而不是上面的无状态函数），如下所示：
 
 ```jsx
 import React from 'react'
@@ -304,9 +305,10 @@ export default class extends React.Component {
 }
 ```
 
-Notice that to load data when the page loads, we use `getInitialProps` which is an [`async`](https://zeit.co/blog/async-and-await) static method. It can asynchronously fetch anything that resolves to a JavaScript plain `Object`, which populates `props`.
+相信你注意到，当页面渲染时加载数据，我们使用了一个异步方法`getInitialProps`。它能异步获取js普通对象，并绑定在`props`上
 
 Data returned from `getInitialProps` is serialized when server rendering, similar to a `JSON.stringify`. Make sure the returned object from `getInitialProps` is a plain `Object` and not using `Date`, `Map` or `Set`.
+当服务渲染时，`getInitialProps`将会把数据序列化，就像`JSON.stringify`。所以确保`getInitialProps`返回的是一个普通js对象，而不是`Date`, `Map` 或 `Set`类型。
 
 For the initial page load, `getInitialProps` will execute on the server only. `getInitialProps` will only be executed on the client when navigating to a different route via the `Link` component or using the routing APIs.
 
