@@ -312,16 +312,21 @@ Data returned from `getInitialProps` is serialized when server rendering, simila
 
 For the initial page load, `getInitialProps` will execute on the server only. `getInitialProps` will only be executed on the client when navigating to a different route via the `Link` component or using the routing APIs.
 
+当页面初始化加载时，`getInitialProps`只会加载在服务端。只有当路由跳转（`Link`组件跳转或API方法跳转）时，客户端才会执行`getInitialProps`。
+
 _Note: `getInitialProps` can **not** be used in children components. Only in `pages`._
+
+注意：`getInitialProps`将不能使用在子组件中。只能使用在`pages`页面中。
 
 <br/>
 
-> If you are using some server only modules inside `getInitialProps`, make sure to [import them properly](https://arunoda.me/blog/ssr-and-server-only-modules).
-> Otherwise, it'll slow down your app.
+> 只有服务端用到的模块放在 `getInitialProps`里，请确保正确的导入了它们，可参考[import them properly](https://arunoda.me/blog/ssr-and-server-only-modules)。
+> 否则会拖慢你的应用速度。
 
 <br/>
 
 You can also define the `getInitialProps` lifecycle method for stateless components:
+你也可以给5⃣无状态组件定义 `getInitialProps`：
 
 ```jsx
 const Page = ({ stars }) =>
@@ -339,18 +344,28 @@ export default Page
 ```
 
 `getInitialProps` receives a context object with the following properties:
+`getInitialProps`入参对象的属性如下：
 
 - `pathname` - path section of URL
+- `pathname` - URL的path部分
 - `query` - query string section of URL parsed as an object
+- `query` - URL的query部分，并被解析成对象
 - `asPath` - `String` of the actual path (including the query) shows in the browser
+- `asPath` - 显示在浏览器中的实际路径（包含查询部分），为`String`类型
 - `req` - HTTP request object (server only)
+- `req` - HTTP请求对象 (只有服务器端有)
 - `res` - HTTP response object (server only)
+- `res` - HTTP返回对象 (只有服务器端有)
 - `jsonPageRes` - [Fetch Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) object (client only)
+- `jsonPageRes` - [获取数据响应对象](https://developer.mozilla.org/en-US/docs/Web/API/Response) (只有客户端有)
 - `err` - Error object if any error is encountered during the rendering
+- `err` - 渲染过程中的任何错误
 
 ### Routing
+### 路由
 
 #### With `<Link>`
+#### `<Link>`用法
 
 <p><details>
   <summary><b>Examples</b></summary>
@@ -360,6 +375,7 @@ export default Page
 </details></p>
 
 Client-side transitions between routes can be enabled via a `<Link>` component. Consider these two pages:
+可以用 `<Link>` 组件实现客户端的路由切换。
 
 ```jsx
 // pages/index.js
@@ -381,20 +397,28 @@ export default () => <p>Welcome to About!</p>
 ```
 
 __Note: use [`<Link prefetch>`](#prefetching-pages) for maximum performance, to link and prefetch in the background at the same time__
+注意：可以使用[`<Link prefetch>`](#prefetching-pages)使链接和预加载在后台同时进行，来达到页面的最佳性能。
 
 Client-side routing behaves exactly like the browser:
+客户端路由行为与浏览器很相似：
 
 1. The component is fetched
-2. If it defines `getInitialProps`, data is fetched. If an error occurs, `_error.js` is rendered
+1. 组件获取
+2. If it defines `getInitialProps`, data is fetched. If an error occurs, `_error.js` is rendered2. 
+2. 如果组件定义了`getInitialProps`，数据获取了。如果有错误情况将会渲染 `_error.js`。
 3. After 1 and 2 complete, `pushState` is performed and the new component is rendered
+3. 1和2都完成了，`pushState`执行，新组件被渲染。
 
 **Deprecated, use [withRouter](https://github.com/zeit/next.js#using-a-higher-order-component) instead** - Each top-level component receives a `url` property with the following API:
+**不建议使用该特性，使用[withRouter](https://github.com/zeit/next.js#using-a-higher-order-component)来代替** - 每个顶级组件都接收`url` 属性，API如下：
 
 - `pathname` - `String` of the current path excluding the query string
-- `query` - `Object` with the parsed query string. Defaults to `{}`
-- `asPath` - `String` of the actual path (including the query) shows in the browser
+- `pathname` - 不包含查询内容的当前路径，为`String`类型
+- `query` - 查询内容，被解析成`Object`类型. 默认为`{}`
+- `asPath` - 展现在浏览器上的实际路径，包含查询内容，为`String`类型
 
 ##### With URL object
+##### URL 对象
 
 <p><details>
   <summary><b>Examples</b></summary>
@@ -404,6 +428,7 @@ Client-side routing behaves exactly like the browser:
 </details></p>
 
 The component `<Link>` can also receive an URL object and it will automatically format it to create the URL string.
+组件`<Link>`接收URL对象，而且它会自动格式化生成URL字符串
 
 ```jsx
 // pages/index.js
@@ -419,9 +444,11 @@ export default () =>
   </div>
 ```
 
-That will generate the URL string `/about?name=Zeit`, you can use every property as defined in the [Node.js URL module documentation](https://nodejs.org/api/url.html#url_url_strings_and_url_objects).
+将生成URL字符串`/about?name=Zeit`，你可以使用任何在[Node.js URL module documentation](https://nodejs.org/api/url.html#url_url_strings_and_url_objects)定义过的属性。
+
 
 ##### Replace instead of push url
+##### 替换路由
 
 The default behaviour for the `<Link>` component is to `push` a new url into the stack. You can use the `replace` prop to prevent adding a new entry.
 
@@ -475,8 +502,10 @@ export default ({ href, name }) =>
 ```
 
 ##### Disabling the scroll changes to top on page
+##### 禁止滚动到页面顶部
 
-The default behaviour of `<Link>` is to scroll to the top of the page. When there is a hash defined it will scroll to the specific id, just like a normal `<a>` tag. To prevent scrolling to the top / hash `scroll={false}` can be added to `<Link>`:
+`<Link>`的默认行为就是滚到页面顶部。当有hash定义时（＃），页面将会滚动到对应的id上，就像`<a>`标签一样。为了预防滚动到顶部，可以给`<Link>`加
+`scroll={false}`属性：
 
 ```jsx
 <Link scroll={false} href="/?counter=10"><a>Disables scrolling</a></Link>
@@ -484,6 +513,7 @@ The default behaviour of `<Link>` is to scroll to the top of the page. When ther
 ```
 
 #### Imperatively
+#### 命令式
 
 <p><details>
   <summary><b>Examples</b></summary>
@@ -494,6 +524,8 @@ The default behaviour of `<Link>` is to scroll to the top of the page. When ther
 </details></p>
 
 You can also do client-side page transitions using the `next/router`
+你也可以用`next/router`实现客户端路由切换
+
 
 ```jsx
 import Router from 'next/router'
@@ -505,10 +537,13 @@ export default () =>
 ```
 
 #### Intercepting `popstate`
+#### 拦截器 `popstate`
 
 In some cases (for example, if using a [custom router](#custom-server-and-routing)), you may wish
 to listen to [`popstate`](https://developer.mozilla.org/en-US/docs/Web/Events/popstate) and react before the router acts on it.
+有些情况（比如使用[custom router](#custom-server-and-routing)），你可能想监听[`popstate`](https://developer.mozilla.org/en-US/docs/Web/Events/popstate)，在路由跳转前做一些动作。
 For example, you could use this to manipulate the request, or force an SSR refresh.
+比如，你可以操作request或强制SSR刷新
 
 ```jsx
 import Router from 'next/router'
@@ -528,24 +563,34 @@ Router.beforePopState(({ url, as, options }) => {
 If you return a falsy value from `beforePopState`, `Router` will not handle `popstate`;
 you'll be responsible for handling it, in that case.
 See [Disabling File-System Routing](#disabling-file-system-routing).
+如果你在`beforePopState`中返回false，`Router`将不会执行`popstate`事件。
 
 Above `Router` object comes with the following API:
+以上`Router`对象的API如下：
 
 - `route` - `String` of the current route
+- `route` - 当前路由的`String`类型
 - `pathname` - `String` of the current path excluding the query string
-- `query` - `Object` with the parsed query string. Defaults to `{}`
-- `asPath` - `String` of the actual path (including the query) shows in the browser
+- `pathname` - 不包含查询内容的当前路径，为`String`类型
+- `query` - 查询内容，被解析成`Object`类型. 默认为`{}`
+- `asPath` - 展现在浏览器上的实际路径，包含查询内容，为`String`类型
 - `push(url, as=url)` - performs a `pushState` call with the given url
-- `push(url, as=url)` - 页面渲染第一个url的页面，浏览器显示的是第二个url
+- `push(url, as=url)` - 页面渲染第一个参数url的页面，浏览器栏显示的是第二个参数url
 - `replace(url, as=url)` - performs a `replaceState` call with the given url
 - `beforePopState(cb=function)` - intercept popstate before router processes the event.
+- `beforePopState(cb=function)` - 在路由器处理事件之前拦截.
 
 The second `as` parameter for `push` and `replace` is an optional _decoration_ of the URL. Useful if you configured custom routes on the server.
+`push` 和 `replace` 函数的第二个参数`as`，是为了装饰URL作用。如果你在服务器端设置了自定义路由将会起作用。
 
 _Note: in order to programmatically change the route without triggering navigation and component-fetching, use `props.url.push` and `props.url.replace` within a component_
+注意：为了用编程方式，而不是用导航栏触发或组件获取的方式来切换路由，可以在组件里使用`props.url.push` 或 `props.url.replace`。
 
 ##### With URL object
+##### URL对象作用
+
 You can use an URL object the same way you use it in a `<Link>` component to `push` and `replace` an URL.
+`push` 或 `replace`可接收的URL对象（`<Link>`组件的URL对象一样）来生成URL。
 
 ```jsx
 import Router from 'next/router'
@@ -563,22 +608,34 @@ export default () =>
 ```
 
 This uses the same exact parameters as in the `<Link>` component.
+也可以像`<Link>`组件一样添加额外的参数。
 
 ##### Router Events
+##### 路由事件
 
 You can also listen to different events happening inside the Router.
 Here's a list of supported events:
+你可以监听路由相关事件。
+下面是事件支持列表：
 
 - `routeChangeStart(url)` - Fires when a route starts to change
+- `routeChangeStart(url)` - 路由开始切换时触发
 - `routeChangeComplete(url)` - Fires when a route changed completely
+- `routeChangeComplete(url)` - 完成路由切换时触发
 - `routeChangeError(err, url)` - Fires when there's an error when changing routes
+- `routeChangeError(err, url)` - 路由切换报错时触发
 - `beforeHistoryChange(url)` - Fires just before changing the browser's history
+- `beforeHistoryChange(url)` - 浏览器history模式开始切换时触发
 - `hashChangeStart(url)` - Fires when the hash will change but not the page
+- `hashChangeStart(url)` - 开始切换hash值但是没有切换页面路由时触发
 - `hashChangeComplete(url)` - Fires when the hash has changed but not the page
+- `hashChangeComplete(url)` - 完成切换hash值但是没有切换页面路由时触发
 
 > Here `url` is the URL shown in the browser. If you call `Router.push(url, as)` (or similar), then the value of `url` will be `as`.
+> 这里的`url`是指显示在浏览器中的url。如果你用了`Router.push(url, as)`（或类似的方法），那浏览器中的url将会显示as的值。
 
 Here's how to properly listen to the router event `routeChangeStart`:
+下面是如何正确使用路由事件`routeChangeStart`的例子：
 
 ```js
 const handleRouteChange = url => {
@@ -589,12 +646,14 @@ Router.events.on('routeChangeStart', handleRouteChange)
 ```
 
 If you no longer want to listen to that event, you can unsubscribe with the `off` method:
+如果你不想长期监听该事件，你可以用`off`事件去取消监听：
 
 ```js
 Router.events.off('routeChangeStart', handleRouteChange)
 ```
 
 If a route load is cancelled (for example by clicking two links rapidly in succession), `routeChangeError` will fire. The passed `err` will contain a `cancelled` property set to `true`.
+如果路由加载被取消（比如快速连续双击链接）
 
 ```js
 Router.events.on('routeChangeError', (err, url) => {
@@ -605,6 +664,7 @@ Router.events.on('routeChangeError', (err, url) => {
 ```
 
 ##### Shallow Routing
+##### 浅层路由
 
 <p><details>
   <summary><b>Examples</b></summary>
@@ -614,8 +674,10 @@ Router.events.on('routeChangeError', (err, url) => {
 </details></p>
 
 Shallow routing allows you to change the URL without running `getInitialProps`. You'll receive the updated `pathname` and the `query` via the `url` prop of the same page that's loaded, without losing state.
+浅层路由允许你改变URL但是不执行 `getInitialProps`生命周期。你可以加载相同页面的URL，得到更新后的路由属性`pathname`和`query`，并不失去state状态。
 
 You can do this by invoking either `Router.push` or `Router.replace` with the `shallow: true` option. Here's an example:
+你可以给`Router.push` 或 `Router.replace`方法加`shallow: true`参数。如下面的例子所示：
 
 ```js
 // Current URL is "/"
@@ -625,8 +687,10 @@ Router.push(href, as, { shallow: true })
 ```
 
 Now, the URL is updated to `/?counter=10`. You can see the updated URL with `this.props.url` inside the `Component`.
+现在URL更新为`/?counter=10`。在组件里查看`this.props.url`你将会看到更新的URL。
 
 You can watch for URL changes via [`componentWillReceiveProps`](https://facebook.github.io/react/docs/react-component.html#componentwillreceiveprops) hook as shown below:
+你可以在[`componentWillReceiveProps`](https://facebook.github.io/react/docs/react-component.html#componentwillreceiveprops)钩子函数中监听URL的变化。
 
 ```js
 componentWillReceiveProps(nextProps) {
@@ -643,7 +707,16 @@ componentWillReceiveProps(nextProps) {
 > ```
 > Since that's a new page, it'll unload the current page, load the new one and call `getInitialProps` even though we asked to do shallow routing.
 
+> 注意:
+>
+> 浅层路由只作用于相同URL的参数改变，比如我们假定有个其他路由`about`，而你向下面代码样运行:
+> ```js
+> Router.push('/?counter=10', '/about?counter=10', { shallow: true })
+> ```
+> 那么这将会出现新页面，即使我们加了浅层路由，但是它还是会卸载当前页，会加载新的页面并触发新页面的`getInitialProps`。
+
 #### Using a Higher Order Component
+#### 高阶组件
 
 <p><details>
   <summary><b>Examples</b></summary>
@@ -653,6 +726,7 @@ componentWillReceiveProps(nextProps) {
 </details></p>
 
 If you want to access the `router` object inside any component in your app, you can use the `withRouter` Higher-Order Component. Here's how to use it:
+如果你想应用里每个组件都处理路由对象，你可以使用`withRouter`高阶组件。下面是如何使用它：
 
 ```jsx
 import { withRouter } from 'next/router'
@@ -679,10 +753,12 @@ export default withRouter(ActiveLink)
 ```
 
 The above `router` object comes with an API similar to [`next/router`](#imperatively).
+上面路由对象的API可以参考[`next/router`](#imperatively).
 
 ### Prefetching Pages
+### 预加载页面
 
-⚠️ This is a production only feature ⚠️
+⚠️ 只有生产环境才有此功能 ⚠️
 
 <p><details>
   <summary><b>Examples</b></summary>
@@ -690,14 +766,19 @@ The above `router` object comes with an API similar to [`next/router`](#imperati
 </details></p>
 
 Next.js has an API which allows you to prefetch pages.
+Next.js有允许你预加载页面的API。
 
 Since Next.js server-renders your pages, this allows all the future interaction paths of your app to be instant. Effectively Next.js gives you the great initial download performance of a _website_, with the ahead-of-time download capabilities of an _app_. [Read more](https://zeit.co/blog/next#anticipation-is-the-key-to-performance).
 
+用Next.js服务端渲染你的页面，可以达到所有你应用里所有未来会跳转的路径即时响应，有效的应用Next.js，可以通过预加载应用程序的功能，最大程度的初始化网站性能。
+
 > With prefetching Next.js only downloads JS code. When the page is getting rendered, you may need to wait for the data.
+> Next.js的预加载功能只预加载JS代码。当页面渲染时，你可能需要等待数据请求。
 
 #### With `<Link>`
 
 You can add `prefetch` prop to any `<Link>` and Next.js will prefetch those pages in the background.
+你可以给<Link>添加 `prefetch` 属性，Next.js将会在后台预加载这些页面。
 
 ```jsx
 import Link from 'next/link'
@@ -726,8 +807,10 @@ export default () =>
 ```
 
 #### Imperatively
+#### 命令式prefetch写法
 
 Most prefetching needs are addressed by `<Link />`, but we also expose an imperative API for advanced usage:
+大多数预加载是通过<Link />处理的，但是我们还提供了命令式API用于更复杂的场景。
 
 ```jsx
 import Router from 'next/router'
@@ -743,6 +826,7 @@ export default ({ url }) =>
 ```
 
 The router instance should be only used inside the client side of your app though. In order to prevent any error regarding this subject, when rendering the Router on the server side, use the imperatively prefetch method in the `componentDidMount()` lifecycle method.
+路由实例只允许在应用程序的客户端。以防服务端渲染发生错误，建议prefetch事件写在`componentDidMount()`生命周期里。
 
 ```jsx
 import React from 'react'
@@ -766,6 +850,7 @@ export default class MyLink extends React.Component {
 ```
 
 ### Custom server and routing
+### 自定义服务端路由
 
 <p><details>
   <summary><b>Examples</b></summary>
@@ -783,6 +868,8 @@ Typically you start your next server with `next start`. It's possible, however, 
 
 When using a custom server with a server file, for example called `server.js`, make sure you update the scripts key in `package.json` to:
 
+一般你使用 `next start` 命令来启动next服务，你还可以编写代码来自定义路由。
+
 ```json
 {
   "scripts": {
@@ -794,6 +881,7 @@ When using a custom server with a server file, for example called `server.js`, m
 ```
 
 This example makes `/a` resolve to `./pages/b`, and `/b` resolve to `./pages/a`:
+下面这个例子使 `/a` 路由解析为`./pages/b`，以及`/b` 路由解析为`./pages/a`;
 
 ```js
 // This file doesn't go through babel or webpack transformation.
@@ -829,18 +917,24 @@ app.prepare().then(() => {
 ```
 
 The `next` API is as follows:
+`next`的API如下所示
 - `next(opts: object)`
 
-Supported options:
+opts的属性如下:
 - `dev` (`bool`) whether to launch Next.js in dev mode - default `false`
-- `dir` (`string`) where the Next project is located - default `'.'`
-- `quiet` (`bool`) Hide error messages containing server information - default `false`
-- `conf` (`object`) the same object you would use in `next.config.js` - default `{}`
+- `dev` (`boolean`) 判断 Next.js应用是否在开发环境 - 默认 `false`
+- `dir` (`string`) Next项目路径 - 默认 `'.'`
+- `quiet` (`boolean`) Hide error messages containing server information - 默认 `false`
+- `quiet` (`boolean`) 是否隐藏包含服务端消息在内的错误信息 - 默认 `false`
+- `conf` (`object`) 与`next.config.js`的对象相同 - 默认 `{}`
 
 Then, change your `start` script to `NODE_ENV=production node server.js`.
+生产环境的话，可以更改package.json里的`start`脚本为`NODE_ENV=production node server.js`。
 
 #### Disabling file-system routing
+#### 禁止文件路由
 By default, `Next` will serve each file in `/pages` under a pathname matching the filename (eg, `/pages/some-file.js` is served at `site.com/some-file`.
+默认情况，`Next`将会把`/pages`下的所有文件匹配路由（如`/pages/some-file.js` 渲染为 `site.com/some-file`）
 
 If your project uses custom routing, this behavior may result in the same content being served from multiple paths, which can present problems with SEO and UX.
 
