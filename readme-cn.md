@@ -937,8 +937,10 @@ By default, `Next` will serve each file in `/pages` under a pathname matching th
 默认情况，`Next`将会把`/pages`下的所有文件匹配路由（如`/pages/some-file.js` 渲染为 `site.com/some-file`）
 
 If your project uses custom routing, this behavior may result in the same content being served from multiple paths, which can present problems with SEO and UX.
+如果你的项目使用自定义路由，那么有可能不同的路由会得到相同的内容，可以优化SEO和用户体验。
 
 To disable this behavior & prevent routing based on files in `/pages`, simply set the following option in your `next.config.js`:
+禁止路由链接到`/pages`下的文件，只需设置`next.config.js`文件如下所示：
 
 ```js
 // next.config.js
@@ -950,16 +952,21 @@ module.exports = {
 Note that `useFileSystemPublicRoutes` simply disables filename routes from SSR; client-side routing
 may still access those paths. If using this option, you should guard against navigation to routes
 you do not want programmatically.
+注意`useFileSystemPublicRoutes`只禁止服务端的文件路由；但是客户端的还是禁止不了。
 
 You may also wish to configure the client-side Router to disallow client-side redirects to filename
 routes; please refer to [Intercepting `popstate`](#intercepting-popstate).
+你如果想配置客户端路由不能跳转文件路由，可以参考[Intercepting `popstate`](#intercepting-popstate)。
 
 #### Dynamic assetPrefix
+#### 动态前缀
 
 Sometimes we need to set the `assetPrefix` dynamically. This is useful when changing the `assetPrefix` based on incoming requests.
+有时你需要设置动态前缀，可以在请求时设置`assetPrefix`改变前缀。
 For that, we can use `app.setAssetPrefix`.
 
 Here's an example usage of it:
+使用方法如下：
 
 ```js
 const next = require('next')
@@ -993,6 +1000,7 @@ app.prepare().then(() => {
 ```
 
 ### Dynamic Import
+### 动态导入
 
 <p><details>
   <summary><b>Examples</b></summary>
@@ -1003,6 +1011,7 @@ app.prepare().then(() => {
 
 Next.js supports TC39 [dynamic import proposal](https://github.com/tc39/proposal-dynamic-import) for JavaScript.
 With that, you could import JavaScript modules (inc. React Components) dynamically and work with them.
+Next.js支持JavaScript的TC39提议[dynamic import proposal](https://github.com/tc39/proposal-dynamic-import)。
 
 You can think dynamic imports as another way to split your code into manageable chunks.
 Since Next.js supports dynamic imports with SSR, you could do amazing things with it.
