@@ -1011,14 +1011,17 @@ app.prepare().then(() => {
 
 Next.js supports TC39 [dynamic import proposal](https://github.com/tc39/proposal-dynamic-import) for JavaScript.
 With that, you could import JavaScript modules (inc. React Components) dynamically and work with them.
-Next.js支持JavaScript的TC39提议[dynamic import proposal](https://github.com/tc39/proposal-dynamic-import)。
+Next.js支持JavaScript的TC39提议[dynamic import proposal](https://github.com/tc39/proposal-dynamic-import)。你可以动态导入JavaScript模块（如React组件）。
 
 You can think dynamic imports as another way to split your code into manageable chunks.
 Since Next.js supports dynamic imports with SSR, you could do amazing things with it.
+动态导入相当于把代码分成各个块管理。Next.js服务端动态导入功能，你可以做很多炫酷事情。
 
 Here are a few ways to use dynamic imports.
+下面介绍一些动态导入方式：
 
 #### 1. Basic Usage (Also does SSR)
+#### 1. 基础支持 (同样支持 SSR)
 
 ```jsx
 import dynamic from 'next/dynamic'
@@ -1034,6 +1037,7 @@ export default () =>
 ```
 
 #### 2. With Custom Loading Component
+#### 2. 自定义加载组件
 
 ```jsx
 import dynamic from 'next/dynamic'
@@ -1054,6 +1058,7 @@ export default () =>
 ```
 
 #### 3. With No SSR
+#### 3. 禁止使用SSR
 
 ```jsx
 import dynamic from 'next/dynamic'
@@ -1071,6 +1076,7 @@ export default () =>
 ```
 
 #### 4. With Multiple Modules At Once
+#### 4. 同时加载多个模块
 
 ```jsx
 import dynamic from 'next/dynamic'
@@ -1098,6 +1104,7 @@ export default () => <HelloBundle title="Dynamic Bundle" />
 ```
 
 ### Custom `<App>`
+### 自定义 `<App>`
 
 <p><details>
   <summary><b>Examples</b></summary>
